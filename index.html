@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Write</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: sans-serif;
+            overflow: hidden;
+            color: darkblue;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 40px);
+            width: 100vw;
+            box-sizing: border-box;
+            padding-left: 2rem;
+        }
+        .grid-column {
+            display: flex;
+            flex-direction: column;
+        }
+        .grid-column span {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight / 7;
+            const columnSize = 20;
+            const spanSize = 5;
+            let numberOfSpans = Math.floor(viewportHeight / spanSize);
+            let numberOfColumns = Math.floor(viewportWidth / columnSize);
+            let gridContainer = document.querySelector(".grid");
+            let animate = true;
+            let spansReseted = false;
+            for(let i = 0; i < numberOfColumns; i++){
+                let newCol = document.createElement("div");
+                newCol.className = "grid-column";
+                gridContainer.appendChild(newCol);
+                for(let k = 0; k < numberOfSpans; k++){
+                    let newSpan = document.createElement("span");
+                    newSpan.id = `${i}-${k}`;
+                    newSpan.innerText = "0";
+                    newSpan.addEventListener("click", function(){
+                        animate = false;
+                        if(!spansReseted){
+                            resetSpans();
+                        }
+                        if(this.innerText == "0"){
+                            this.innerText = "1"
+                            newSpan.style.color = "white";
+                        } else {
+                            newSpan.innerText = "0"
+                            newSpan.style.color = "darkblue";
+                        }
+                    })
+                    newCol.appendChild(newSpan);
+                }
+            }
+            let allSpans = document.querySelectorAll('span');
+            (async () => {
+                while(animate){
+                    let chosen = allSpans[Math.floor(Math.random() * allSpans.length)];
+                    if(chosen.innerText == "0"){
+                        chosen.innerText = "1"
+                        chosen.style.color = "white";
+                    } else {
+                        chosen.innerText = "0"
+                        chosen.style.color = "darkblue";
+                    }
+                    //allSpans[Math.floor((Math.random() * allSpans.length) + 0)].innerText = Math.floor(Math.random() * 2);
+                    await sleep(1);
+                }
+            })();
+            function resetSpans(){
+                spansReseted = true;
+                allSpans.forEach(one => {
+                    one.innerText = "0";
+                    one.style.color = "darkblue";
+                });
+            }
+        })
+    </script>
+</body>
+</html>
