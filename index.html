@@ -1,98 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binary Write</title>
-    <style>
-        body {
-            background-color: black;
-            color: white;
-            font-family: sans-serif;
-            overflow: hidden;
-            color: darkblue;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 40px);
-            width: 100vw;
-            box-sizing: border-box;
-            padding-left: 2rem;
-        }
-        .grid-column {
-            display: flex;
-            flex-direction: column;
-        }
-        .grid-column span {
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Binary Write</title>
+  <style>
+    body {
+      background-color: black;
+      color: darkblue;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 20px);
+      width: 100vw;
+    }
+    .grid-column {
+      display: flex;
+      flex-direction: column;
+    }
+    .grid-column span {
+      cursor: pointer;
+      height: 10px;
+      font-size: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <div class="grid">
+  <div class="grid"></div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const sleep = ms => new Promise(res => setTimeout(res, ms));
 
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function(){
-            function sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
+      const columnSize = 20;
+      const rowSize = 10;
+      const cols = Math.floor(window.innerWidth / columnSize);
+      const rows = Math.floor(window.innerHeight / rowSize);
+
+      const gridArray = [];
+      const grid = document.querySelector(".grid");
+
+      for (let x = 0; x < cols; x++) {
+        const col = document.createElement("div");
+        col.className = "grid-column";
+        grid.appendChild(col);
+
+        for (let y = 0; y < rows; y++) {
+          const span = document.createElement("span");
+          span.id = `${x}-${y}`;
+          span.innerText = "0";
+          span.style.color = "darkblue";
+          span.addEventListener("click", () => {
+            animate = false;
+            if (!spansReseted) resetSpans();
+            span.innerText = span.innerText === "0" ? "1" : "0";
+            span.style.color = span.innerText === "1" ? "white" : "darkblue";
+          });
+          col.appendChild(span);
+          if (!gridArray[y]) gridArray[y] = [];
+          gridArray[y][x] = 0;
+        }
+      }
+
+      const width = cols;
+      const height = rows;
+      let animate = true;
+      let spansReseted = false;
+
+      function resetSpans() {
+        spansReseted = true;
+        document.querySelectorAll("span").forEach(span => {
+          span.innerText = "0";
+          span.style.color = "darkblue";
+        });
+      }
+
+            function drawLetterToGrid(char) {
+        const font = {
+            "A": [[0,1,1,1,0],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1]],
+            "B": [[1,1,1,1,0],[1,0,0,0,1],[1,1,1,1,0],[1,0,0,0,1],[1,1,1,1,0]],
+            "C": [[0,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[0,1,1,1,1]],
+            "D": [[1,1,1,0,0],[1,0,0,1,0],[1,0,0,0,1],[1,0,0,1,0],[1,1,1,0,0]],
+            "E": [[1,1,1,1,1],[1,0,0,0,0],[1,1,1,1,0],[1,0,0,0,0],[1,1,1,1,1]],
+            "F": [[1,1,1,1,1],[1,0,0,0,0],[1,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0]],
+            "G": [[0,1,1,1,1],[1,0,0,0,0],[1,0,1,1,1],[1,0,0,0,1],[0,1,1,1,1]],
+            "H": [[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1]],
+            "I": [[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1]],
+            "J": [[0,0,0,1,1],[0,0,0,0,1],[0,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+            "K": [[1,0,0,0,1],[1,0,0,1,0],[1,1,1,0,0],[1,0,0,1,0],[1,0,0,0,1]],
+            "L": [[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
+            "M": [[1,0,0,0,1],[1,1,0,1,1],[1,0,1,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+            "N": [[1,0,0,0,1],[1,1,0,0,1],[1,0,1,0,1],[1,0,0,1,1],[1,0,0,0,1]],
+            "O": [[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+            "P": [[1,1,1,1,0],[1,0,0,0,1],[1,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0]],
+            "Q": [[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[0,1,1,1,1]],
+            "R": [[1,1,1,1,0],[1,0,0,0,1],[1,1,1,1,0],[1,0,1,0,0],[1,0,0,1,0]],
+            "S": [[0,1,1,1,1],[1,0,0,0,0],[0,1,1,1,0],[0,0,0,0,1],[1,1,1,1,0]],
+            "T": [[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+            "U": [[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+            "V": [[1,0,0,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,1,0,1,0],[0,0,1,0,0]],
+            "W": [[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[1,1,0,1,1],[1,0,0,0,1]],
+            "X": [[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1]],
+            "Y": [[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+            "Z": [[1,1,1,1,1],[0,0,0,1,0],[0,0,1,0,0],[0,1,0,0,0],[1,1,1,1,1]],
+            " ": [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+            "0": [[0,1,1,1,0],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+            "1": [[0,0,1,0,0],[0,1,1,0,0],[1,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1]],
+            "2": [[0,1,1,1,0],[1,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[1,1,1,1,1]],
+            "3": [[1,1,1,1,0],[0,0,0,0,1],[0,0,1,1,0],[0,0,0,0,1],[1,1,1,1,0]],
+            "4": [[0,0,0,1,0],[0,0,1,1,0],[0,1,0,1,0],[1,1,1,1,1],[0,0,0,1,0]],
+            "5": [[1,1,1,1,1],[1,0,0,0,0],[1,1,1,1,0],[0,0,0,0,1],[1,1,1,1,0]],
+            "6": [[0,1,1,1,0],[1,0,0,0,0],[1,1,1,1,0],[1,0,0,0,1],[0,1,1,1,0]],
+            "7": [[1,1,1,1,1],[0,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[0,0,1,0,0]],
+            "8": [[0,1,1,1,0],[1,0,0,0,1],[0,1,1,1,0],[1,0,0,0,1],[0,1,1,1,0]],
+            "9": [[0,1,1,1,0],[1,0,0,0,1],[0,1,1,1,1],[0,0,0,0,1],[0,1,1,1,0]],
+            "!": [[0,1,0,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,0,0,0,0],[0,1,0,0,0]],
+            "+": [[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0]],
+            "-": [[0,0,0,0,0],[0,0,0,0,0],[1,1,1,1,1],[0,0,0,0,0],[0,0,0,0,0]],
+            "*": [[1,0,1,0,1],[0,1,1,1,0],[1,1,1,1,1],[0,1,1,1,0],[1,0,1,0,1]],
+            ".": [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+            "/": [[0,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[0,1,0,0,0],[1,0,0,0,0]],
+            "?": [[0,1,1,1,0],[1,0,0,0,1],[0,0,1,1,0],[0,0,0,0,0],[0,0,1,0,0]],
+            ":": [[0,0,0,0,0],[0,0,1,0,0],[0,0,0,0,0],[0,0,1,0,0],[0,0,0,0,0]],
+            "(": [[0,0,1,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,0,1,0,0]],
+            ")": [[0,1,0,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,1,0,0,0]],
+            "=": [[0,0,0,0,0],[1,1,1,1,1],[0,0,0,0,0],[1,1,1,1,1],[0,0,0,0,0]],
+            "#": [[0,1,0,1,0],[1,1,1,1,1],[0,1,0,1,0],[1,1,1,1,1],[0,1,0,1,0]],
+            '"': [[1,0,1,0,0],[1,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+            "'": [[0,1,0,0,0],[0,1,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+            "[": [[0,1,1,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,1,1,0,0]],
+            "]": [[0,1,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,1,1,0,0]],
+            "{": [[0,0,1,1,0],[0,1,0,0,0],[1,1,0,0,0],[0,1,0,0,0],[0,0,1,1,0]],
+            "}": [[1,1,0,0,0],[0,0,1,0,0],[0,0,1,1,0],[0,0,1,0,0],[1,1,0,0,0]],
+            "←": [[0,0,1,0,0],[0,1,0,0,0],[1,1,1,1,1],[0,1,0,0,0],[0,0,1,0,0]],
+            "→": [[0,0,1,0,0],[0,0,0,1,0],[1,1,1,1,1],[0,0,0,1,0],[0,0,1,0,0]],
+            "↑": [[0,0,1,0,0],[0,1,1,1,0],[1,0,1,0,1],[0,0,1,0,0],[0,0,1,0,0]],
+            "↓": [[0,0,1,0,0],[0,0,1,0,0],[1,0,1,0,1],[0,1,1,1,0],[0,0,1,0,0]],
+        };
+
+
+        const charW = 5;
+        const charH = 5;
+        const bitmap = font[char] || font[' '];
+
+        const scale = Math.max(1, Math.min(
+          Math.floor(width / charW),
+          Math.floor(height / charH)
+        ));
+
+        const drawW = charW * scale;
+        const drawH = charH * scale;
+        const offsetX = Math.floor((width - drawW) / 2);
+        const offsetY = Math.floor((height - drawH) / 2);
+
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            gridArray[y][x] = 0;
+          }
+        }
+
+        for (let y = 0; y < drawH; y++) {
+          for (let x = 0; x < drawW; x++) {
+            const srcY = Math.floor(y / scale);
+            const srcX = Math.floor(x / scale);
+            if (bitmap[srcY][srcX] === 1) {
+              const gx = x + offsetX;
+              const gy = y + offsetY;
+              if (gridArray[gy] && gridArray[gy][gx] !== undefined) {
+                gridArray[gy][gx] = 1;
+              }
             }
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight / 7;
-            const columnSize = 20;
-            const spanSize = 5;
-            let numberOfSpans = Math.floor(viewportHeight / spanSize);
-            let numberOfColumns = Math.floor(viewportWidth / columnSize);
-            let gridContainer = document.querySelector(".grid");
-            let animate = true;
-            let spansReseted = false;
-            for(let i = 0; i < numberOfColumns; i++){
-                let newCol = document.createElement("div");
-                newCol.className = "grid-column";
-                gridContainer.appendChild(newCol);
-                for(let k = 0; k < numberOfSpans; k++){
-                    let newSpan = document.createElement("span");
-                    newSpan.id = `${i}-${k}`;
-                    newSpan.innerText = "0";
-                    newSpan.addEventListener("click", function(){
-                        animate = false;
-                        if(!spansReseted){
-                            resetSpans();
-                        }
-                        if(this.innerText == "0"){
-                            this.innerText = "1"
-                            newSpan.style.color = "white";
-                        } else {
-                            newSpan.innerText = "0"
-                            newSpan.style.color = "darkblue";
-                        }
-                    })
-                    newCol.appendChild(newSpan);
-                }
+          }
+        }
+      }
+
+    async function animateRandomFillToLetter(targetBitmap) {
+    const coordsToFill = [];
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+        if (targetBitmap[y] && targetBitmap[y][x] === 1) {
+            coordsToFill.push({ x, y });
+        }
+        }
+    }
+
+    for (let i = coordsToFill.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [coordsToFill[i], coordsToFill[j]] = [coordsToFill[j], coordsToFill[i]];
+    }
+
+    const batchSize = 100;
+    for (let i = 0; i < coordsToFill.length; i += batchSize) {
+        for (let j = 0; j < batchSize && i + j < coordsToFill.length; j++) {
+        const { x, y } = coordsToFill[i + j];
+        gridArray[y][x] = 1;
+        const span = document.getElementById(`${x}-${y}`);
+        if (span) {
+            span.innerText = "1";
+            span.style.color = "white";
+        }
+        }
+        await new Promise(requestAnimationFrame); // allows UI to catch up
+    }
+    }
+
+      async function animateTextLetterByLetter(text) {
+        const chars = text.toUpperCase().split("");
+        for (const ch of chars) {
+          drawLetterToGrid(ch);
+          const targetBitmap = gridArray.map(row => row.slice());
+
+          // Clear grid
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              gridArray[y][x] = 0;
+              const span = document.getElementById(`${x}-${y}`);
+              if (span) {
+                span.innerText = "0";
+                span.style.color = "darkblue";
+              }
             }
-            let allSpans = document.querySelectorAll('span');
-            (async () => {
-                while(animate){
-                    let chosen = allSpans[Math.floor(Math.random() * allSpans.length)];
-                    if(chosen.innerText == "0"){
-                        chosen.innerText = "1"
-                        chosen.style.color = "white";
-                    } else {
-                        chosen.innerText = "0"
-                        chosen.style.color = "darkblue";
-                    }
-                    //allSpans[Math.floor((Math.random() * allSpans.length) + 0)].innerText = Math.floor(Math.random() * 2);
-                    await sleep(1);
-                }
-            })();
-            function resetSpans(){
-                spansReseted = true;
-                allSpans.forEach(one => {
-                    one.innerText = "0";
-                    one.style.color = "darkblue";
-                });
-            }
-        })
-    </script>
+          }
+          await animateRandomFillToLetter(targetBitmap);
+          await sleep(300);
+        }
+      }
+
+      (async () => {
+        const spans = document.querySelectorAll("span");
+        while (animate) {
+          const s = spans[Math.floor(Math.random() * spans.length)];
+          s.innerText = s.innerText === "0" ? "1" : "0";
+          s.style.color = s.innerText === "1" ? "white" : "darkblue";
+          await sleep(1);
+        }
+      })();
+
+      const keysPressed = {};
+      document.addEventListener("keydown", (e) => {
+        keysPressed[e.key] = true;
+        if ((keysPressed["Control"] && (keysPressed["q"] || keysPressed["Q"]))) {
+          if (keysPressed._handled) return;
+          keysPressed._handled = true;
+
+          const userText = prompt("Text:");
+          if (userText && userText.trim()) {
+            animate = false;
+            resetSpans();
+            animateTextLetterByLetter(userText.trim());
+          }
+
+          for (let k in keysPressed) {
+            if (k !== "_handled") delete keysPressed[k];
+          }
+          keysPressed._handled = false;
+        }
+      });
+
+      document.addEventListener("keyup", (e) => {
+        delete keysPressed[e.key];
+      });
+    });
+  </script>
 </body>
 </html>
