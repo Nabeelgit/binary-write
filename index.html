@@ -76,7 +76,7 @@
         });
       }
 
-            function drawLetterToGrid(char) {
+      function drawLetterToGrid(char) {
         const font = {
             "A": [[0,1,1,1,0],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1]],
             "B": [[1,1,1,1,0],[1,0,0,0,1],[1,1,1,1,0],[1,0,0,0,1],[1,1,1,1,0]],
@@ -236,7 +236,16 @@
           await sleep(1);
         }
       })();
-
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      if(urlParams.has("text")){
+        let userText = urlParams.get("text");
+        if (userText && userText.trim()) {
+          animate = false;
+          resetSpans();
+          animateTextLetterByLetter(userText.trim());
+        }
+      }
       const keysPressed = {};
       document.addEventListener("keydown", (e) => {
         keysPressed[e.key] = true;
