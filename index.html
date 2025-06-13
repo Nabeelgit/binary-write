@@ -53,8 +53,6 @@
           span.innerText = "0";
           span.style.color = "darkblue";
           span.addEventListener("click", () => {
-            animate = false;
-            if (!spansReseted) resetSpans();
             span.innerText = span.innerText === "0" ? "1" : "0";
             span.style.color = span.innerText === "1" ? "white" : "darkblue";
           });
@@ -268,11 +266,54 @@
             if (k !== "_handled") delete keysPressed[k];
           }
           keysPressed._handled = false;
+        } else if ((keysPressed["Control"] && (keysPressed["b"] || keysPressed["B"]))) {
+            animate = false;
+            resetSpans();
         }
       });
 
       document.addEventListener("keyup", (e) => {
         delete keysPressed[e.key];
+      });
+      document.addEventListener("mouseup", () => {
+        const selection = window.getSelection();
+        if (!selection || selection.isCollapsed) return;
+
+        const range = selection.getRangeAt(0);
+        const selectedSpans = [];
+
+        const walker = document.createTreeWalker(
+          range.commonAncestorContainer,
+          NodeFilter.SHOW_ELEMENT,
+          {
+            acceptNode(node) {
+              if (node.tagName === "SPAN" && node.id?.includes("-")) {
+                return NodeFilter.FILTER_ACCEPT;
+              }
+              return NodeFilter.FILTER_SKIP;
+            }
+          }
+        );
+
+        while (walker.nextNode()) {
+          const span = walker.currentNode;
+          const spanRange = document.createRange();
+          spanRange.selectNodeContents(span);
+          if (range.intersectsNode(span)) {
+            selectedSpans.push(span);
+          }
+        }
+
+        selectedSpans.forEach(span => {
+          const [x, y] = span.id.split("-").map(Number);
+          const current = gridArray[y][x];
+          const next = current === 1 ? 0 : 1;
+          gridArray[y][x] = next;
+          span.innerText = next.toString();
+          span.style.color = next === 1 ? "white" : "darkblue";
+        });
+
+        selection.removeAllRanges();
       });
     });
   </script>
