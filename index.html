@@ -33,11 +33,12 @@
     document.addEventListener("DOMContentLoaded", () => {
       const sleep = ms => new Promise(res => setTimeout(res, ms));
 
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
       const columnSize = 20;
       const rowSize = 10;
       const cols = Math.floor(window.innerWidth / columnSize);
       const rows = Math.floor(window.innerHeight / rowSize);
-
       const gridArray = [];
       const grid = document.querySelector(".grid");
 
@@ -190,7 +191,13 @@
         [coordsToFill[i], coordsToFill[j]] = [coordsToFill[j], coordsToFill[i]];
     }
 
-    const batchSize = 100;
+    let batchSize = 100;
+    if(urlParams.has("batch")){
+      let tempBatch = urlParams.get("batch");
+      if(tempBatch && Number.isInteger(Math.floor(Number(tempBatch)))){
+        batchSize = parseInt(tempBatch);
+      }
+    }
     for (let i = 0; i < coordsToFill.length; i += batchSize) {
         for (let j = 0; j < batchSize && i + j < coordsToFill.length; j++) {
         const { x, y } = coordsToFill[i + j];
@@ -201,10 +208,9 @@
             span.style.color = "white";
         }
         }
-        await new Promise(requestAnimationFrame); // allows UI to catch up
+        await new Promise(requestAnimationFrame);
     }
     }
-
       async function animateTextLetterByLetter(text) {
         const chars = text.toUpperCase().split("");
         for (const ch of chars) {
@@ -236,8 +242,6 @@
           await sleep(1);
         }
       })();
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
       if(urlParams.has("text")){
         let userText = urlParams.get("text");
         if (userText && userText.trim()) {
