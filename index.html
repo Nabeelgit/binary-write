@@ -267,8 +267,21 @@
           }
           keysPressed._handled = false;
         } else if ((keysPressed["Control"] && (keysPressed["b"] || keysPressed["B"]))) {
-            animate = false;
-            resetSpans();
+            if(!animate){
+                animate = true;
+                (async () => {
+                const spans = document.querySelectorAll("span");
+                while (animate) {
+                  const s = spans[Math.floor(Math.random() * spans.length)];
+                  s.innerText = s.innerText === "0" ? "1" : "0";
+                  s.style.color = s.innerText === "1" ? "white" : "darkblue";
+                  await sleep(1);
+                }
+              })();
+            } else {
+                animate = false;
+                resetSpans();
+            }
         }
       });
 
